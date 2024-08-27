@@ -9,7 +9,8 @@ Powered by [Laravel](https://laravel.com/docs).
 - Go to project directory `cd submission-api`
 - Start local development server in background - vendor/bin/sail
 - Fill environments for database connection
-- Run migrations `vendor/bin/sail migrate`
+- Run migrations `vendor/bin/sail artisan migrate`
+- Start horizon `vendor/bin/sail artisan horizon`
 
 ## Useful commands
 - `vendor/bin/sail composer run lint` - check code styles correspond to PSR12
