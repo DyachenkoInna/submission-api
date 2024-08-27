@@ -1,0 +1,104 @@
+openapi: 3.0.3
+info:
+  title: Submission API
+  description: Service for handling customers submission.
+  version: 1.0.0
+servers:
+  - url: http://localhost/v1/
+    description: Local
+tags:
+  - name: Submission
+    description: Operations about submission
+paths:
+  /submit:
+    post:
+      tags:
+        - Submission
+      operationId: submitFeedback
+      summary: Submit a new feedback
+      description: This method allows to submit customer feedback.
+      requestBody:
+        $ref: '#/components/requestBodies/SubmitRequest'
+      responses:
+        200:
+          $ref: '#/components/responses/SubmitResponse'
+        422:
+          $ref: '#/components/responses/ValidationException'
+        429:
+          $ref: '#/components/responses/TooManyRequests'
+
+components:
+  responses:
+    SubmitResponse:
+      description: Successful submission
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: string
+                description: Submission status
+                enum:
+                  - Accepted
+                  - Rejected
+                  - Finished
+                example: Accepted
+
+    ValidationException:
+      description: Validation error response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: The email field is required. (and 1 more error).
+              errors:
+                type: object
+                properties:
+                  email:
+                    type: array
+                    items:
+                      type: string
+                    description: Error for field
+                    example: [ "The email field is required.", "The email field must be valid email."]
+
+    TooManyRequests:
+      description: Too many requests error - triggered if the customer with same IP has sent more than 10 request in one minute.
+      content:
+        application/json:
+          schema:
+            type: object
+            title: TooManyRequests
+            properties:
+              message:
+                type: string
+                example: Too Many Attempts.
+
+  requestBodies:
+    SubmitRequest:
+      description: Pass name, email and message
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - message
+            properties:
+              name:
+                type: string
+                description: Customer name
+                format: email
+              email:
+                type: string
+                description: Customer email
+                format: email
+              message:
+                type: string
+                format: text
+                description: Message from customer
+      required: true
